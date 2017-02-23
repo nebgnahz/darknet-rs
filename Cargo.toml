@@ -1,0 +1,9 @@
+[package]
+name = "darknet"
+version = "0.1.0"
+authors = ["Ben Zhang <benzh@cs.berkeley.edu>"]
+
+[dependencies]
+
+[build-dependencies]
+bindgen = "0.20.0"
