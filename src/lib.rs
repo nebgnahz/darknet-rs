@@ -30,10 +30,15 @@ impl List {
     }
 }
 
-pub fn test_detector(datacfg: &str, _cfgfile: &str, _weightfile: &str,
-                     _thresh: f64, _hier_thresh: f64) {
-    let options = List::read_data_cfg(datacfg);
-    let _list = options.find_str("names", "data/names.list");
-    
+#[repr(C)]
+pub struct Box {
+    x: f32,
+    y: f32,
+    w: f32,
+    h: f32,
+}
+
+pub fn detect(_img: *const f32, _size: usize) -> Vec<Box> {
+    Vec::new()
 }
     
