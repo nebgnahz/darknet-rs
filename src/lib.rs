@@ -1,5 +1,16 @@
-#![allow(non_upper_case_globals)]
-#![allow(non_camel_case_types)]
-#![allow(non_snake_case)]
+pub mod ffi;
+use std::ffi::CString;
+    
+pub struct List {
+    list: *mut ffi::list,
+}
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+impl List {
+    pub fn from_data_cfg(filename: &str) -> List {
+        let c_filename = CString::new(filename).unwrap().into_raw();
+        List {
+            list: unsafe { ffi::read_data_cfg(c_filename) }
+        }
+    }
+}
+
