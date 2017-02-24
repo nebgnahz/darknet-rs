@@ -10,6 +10,7 @@ fn main() {
         .whitelist_recursively(true)
         .whitelisted_type("list")
         .whitelisted_function("read_data_cfg")
+        .whitelisted_function("option_find_str")
         .link("darknet-sys/darknet.so")
         .generate()
         .expect("Unable to generate bindings");
