@@ -24,4 +24,14 @@ fn main() {
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings.write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
+
+    println!("cargo:rustc-link-search=native=darknet-sys");
+    println!("cargo:rustc-link-lib=darknet");
+
+    // CUDA
+    println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
+    println!("cargo:rustc-link-lib=cuda");
+    println!("cargo:rustc-link-lib=cudart");
+    println!("cargo:rustc-link-lib=cublas");
+    println!("cargo:rustc-link-lib=curand");
 }
