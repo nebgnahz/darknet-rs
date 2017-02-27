@@ -1,6 +1,8 @@
 pub mod ffi;
+use std::ffi::CStr;
 
 #[repr(C)]
+#[derive(Debug)]
 pub struct Rect {
     x: f32,
     y: f32,
@@ -8,15 +10,19 @@ pub struct Rect {
     h: f32,
 }
 
-#[repr(C)]
-pub struct Detections {
-    inner: ffi::Detections,
+#[derive(Debug)]
+struct Detection {
+    rect: Rect,
+    label: String,
+    prob: f32
 }
 
-impl ::std::fmt::Debug for Detections {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        write!(f, "Detected {} objects", self.inner.num)
-    }
+#[repr(C)]
+#[derive(Debug)]
+pub struct Detections {
+    num: usize,
+    detections: Vec<Detection>,
+    proc_time_in_ms: f32,
 }
 
 #[repr(C)]
@@ -50,8 +56,32 @@ impl Darknet {
     }
 
     pub fn detect(&mut self, image: InputImage) -> Detections {
+        let c_detections = unsafe { darknet_detect(self.inner, image.inner) };
+        let num = c_detections.num;
+        let mut detections = Vec::with_capacity(num as usize);
+        for i in 0..(num as isize) {
+            let label = unsafe {
+                CStr::from_ptr(*c_detections.labels.offset(i)).to_string_lossy().into_owned()
+            };
+            let d = unsafe {
+                Detection {
+                    label: label,
+                    prob:  *(c_detections.probs.offset(i)),
+                    rect: Rect {
+                        x: (*c_detections.rects.offset(i)).x,
+                        y: (*c_detections.rects.offset(i)).y,
+                        w: (*c_detections.rects.offset(i)).w,
+                        h: (*c_detections.rects.offset(i)).h,
+                    },
+                }
+            };
+            detections.push(d);
+        }
+        unsafe { detections_drop(c_detections) }
         Detections {
-            inner: unsafe { darknet_detect(self.inner, image.inner) }
+            num: num as usize,
+            detections: detections,
+            proc_time_in_ms: c_detections.proc_time_in_ms,
         }
     }
 }
@@ -60,14 +90,6 @@ impl Drop for Darknet {
     fn drop(&mut self) {
         unsafe {
             darknet_drop(self.inner);
-        }
-    }
-}
-
-impl Drop for Detections {
-    fn drop(&mut self) {
-        unsafe {
-            detections_drop(self.inner);
         }
     }
 }
