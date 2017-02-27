@@ -4,6 +4,11 @@ version = "0.1.0"
 authors = ["Ben Zhang <benzh@cs.berkeley.edu>"]
 
 [dependencies]
+cv = { git = "https://github.com/nebgnahz/cv-rs.git" }
 
 [build-dependencies]
 bindgen = "0.20.0"
+
+[[bin]]
+name = "main"
+doc = false

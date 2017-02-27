@@ -13,10 +13,12 @@ fn main() {
         .whitelisted_type("Detections")
         .whitelisted_type("Darknet")
         .whitelisted_type("InputImage")
+        .whitelisted_type("image")
         .whitelisted_function("darknet_new")
         .whitelisted_function("darknet_drop")
         .whitelisted_function("darknet_size")
         .whitelisted_function("darknet_detect")
+        .whitelisted_function("make_image")
         .link("darknet-sys/darknet.so")
         .generate()
         .expect("Unable to generate bindings");

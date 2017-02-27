@@ -2,8 +2,8 @@ pub mod ffi;
 
 #[repr(C)]
 pub struct Size {
-    width: i32,
-    height: i32,
+    pub width: i32,
+    pub height: i32,
 }
 
 #[repr(C)]
@@ -19,9 +19,29 @@ pub struct Detections {
     inner: ffi::Detections,
 }
 
+impl ::std::fmt::Debug for Detections {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        write!(f, "Detected {} objects", self.inner.num)
+    }
+}
+
 #[repr(C)]
 pub struct InputImage {
-    inner: ffi::InputImage
+    inner: ffi::image,
+}
+
+impl InputImage {
+    pub fn new(w: i32, h: i32, c: i32) -> InputImage {
+        InputImage {
+            inner: unsafe {
+                make_image(w, h, c)
+            }
+        }
+    }
+
+    pub fn data_mut(&mut self) -> *mut f32 {
+        self.inner.data
+    }
 }
 
 pub struct Darknet {
@@ -66,6 +86,7 @@ extern "C" {
     fn darknet_new() -> *mut ffi::Darknet;
     fn darknet_drop(dn: *mut ffi::Darknet);
     fn darknet_size(dn: *const ffi::Darknet) -> Size;
-    fn darknet_detect(dn: *mut ffi::Darknet, image: ffi::InputImage) -> ffi::Detections;
+    fn darknet_detect(dn: *mut ffi::Darknet, image: ffi::image) -> ffi::Detections;
     fn detections_drop(dt: ffi::Detections);
+    fn make_image(w: i32, h: i32, c: i32) -> ffi::image;
 }
