@@ -1,12 +1,6 @@
 pub mod ffi;
 
 #[repr(C)]
-pub struct Size {
-    pub width: i32,
-    pub height: i32,
-}
-
-#[repr(C)]
 pub struct Rect {
     x: f32,
     y: f32,
@@ -55,10 +49,6 @@ impl Darknet {
         }
     }
 
-    pub fn size(&self) -> Size {
-        unsafe { darknet_size(self.inner) }
-    }
-
     pub fn detect(&mut self, image: InputImage) -> Detections {
         Detections {
             inner: unsafe { darknet_detect(self.inner, image.inner) }
@@ -85,7 +75,6 @@ impl Drop for Detections {
 extern "C" {
     fn darknet_new() -> *mut ffi::Darknet;
     fn darknet_drop(dn: *mut ffi::Darknet);
-    fn darknet_size(dn: *const ffi::Darknet) -> Size;
     fn darknet_detect(dn: *mut ffi::Darknet, image: ffi::image) -> ffi::Detections;
     fn detections_drop(dt: ffi::Detections);
     fn make_image(w: i32, h: i32, c: i32) -> ffi::image;

@@ -28,13 +28,9 @@ fn cv_mat_to_darknet_image(mat: &cv::Mat) -> darknet::InputImage {
 
 fn main() {
     let mut dn = Darknet::new();
-    let size = dn.size();
-    let size = cv::Size2i::new(size.width, size.height);
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/dog.jpg");
     let image = cv::Mat::from_path(path, cv::imgcodecs::ImreadModes::ImreadColor)
         .expect("failed to load image");
-
-    let image = image.resize_to(size, cv::imgproc::InterpolationFlag::InterNearst);
     let image = cv_mat_to_darknet_image(&image);
     let detections = dn.detect(image);
     println!("{:?}", detections);
