@@ -15,7 +15,7 @@ pub struct Rect {
 pub struct Detection {
     rect: Rect,
     label: String,
-    prob: f32
+    prob: f32,
 }
 
 #[repr(C)]
@@ -29,7 +29,12 @@ pub struct Detections {
 impl Detection {
     pub fn csv(&self) -> String {
         format!("{}, {}, {}, {}, {}, {}",
-                self.label, self.prob, self.rect.x, self.rect.y, self.rect.w, self.rect.h)
+                self.label,
+                self.prob,
+                self.rect.x,
+                self.rect.y,
+                self.rect.w,
+                self.rect.h)
     }
 }
 
@@ -37,7 +42,11 @@ impl Detections {
     pub fn csv(&self) -> String {
         let mut res = String::new();
         for i in 0..self.num {
-            write!(&mut res, "{}, {}\n", self.proc_time_in_ms, self.detections[i].csv()).unwrap();
+            write!(&mut res,
+                   "{}, {}\n",
+                   self.proc_time_in_ms,
+                   self.detections[i].csv())
+                .unwrap();
         }
         res
     }
@@ -48,13 +57,15 @@ pub struct InputImage {
     inner: ffi::image,
 }
 
+impl Drop for InputImage {
+    fn drop(&mut self) {
+        unsafe { free_image(self.inner) }
+    }
+}
+
 impl InputImage {
     pub fn new(w: i32, h: i32, c: i32) -> InputImage {
-        InputImage {
-            inner: unsafe {
-                make_image(w, h, c)
-            }
-        }
+        InputImage { inner: unsafe { make_image(w, h, c) } }
     }
 
     pub fn data_mut(&mut self) -> *mut f32 {
@@ -80,11 +91,7 @@ impl Darknet {
             label_file: label_cstring.as_ptr(),
         };
 
-        Darknet {
-            inner: unsafe {
-                darknet_new(config)
-            },
-        }
+        Darknet { inner: unsafe { darknet_new(config) } }
     }
 
     pub fn detect(&mut self, image: InputImage) -> Detections {
@@ -98,7 +105,7 @@ impl Darknet {
             let d = unsafe {
                 Detection {
                     label: label,
-                    prob:  *(c_detections.probs.offset(i)),
+                    prob: *(c_detections.probs.offset(i)),
                     rect: Rect {
                         x: (*c_detections.rects.offset(i)).x,
                         y: (*c_detections.rects.offset(i)).y,
@@ -132,4 +139,5 @@ extern "C" {
     fn darknet_detect(dn: *mut ffi::Darknet, image: ffi::image) -> ffi::Detections;
     fn detections_drop(dt: ffi::Detections);
     fn make_image(w: i32, h: i32, c: i32) -> ffi::image;
+    fn free_image(image: ffi::image);
 }

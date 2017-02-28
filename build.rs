@@ -18,6 +18,7 @@ fn main() {
         .whitelisted_function("darknet_drop")
         .whitelisted_function("darknet_detect")
         .whitelisted_function("make_image")
+        .whitelisted_function("free_image")
         .link("darknet-sys/darknet.so")
         .generate()
         .expect("Unable to generate bindings");
