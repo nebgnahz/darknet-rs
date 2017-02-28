@@ -27,8 +27,11 @@ fn cv_mat_to_darknet_image(mat: &cv::Mat) -> darknet::InputImage {
 }
 
 fn main() {
-    let mut dn = Darknet::new();
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/dog.jpg");
+    let mut dn = Darknet::new(concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/cfg/coco.data"),
+                              concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/cfg/yolo.cfg"),
+                              concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/yolo.weights"),
+                              "");
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/person.jpg");
     let image = cv::Mat::from_path(path, cv::imgcodecs::ImreadModes::ImreadColor)
         .expect("failed to load image");
     let image = cv_mat_to_darknet_image(&image);

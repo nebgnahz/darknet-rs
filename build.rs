@@ -11,6 +11,7 @@ fn main() {
         .whitelisted_type("Rect")
         .whitelisted_type("Detections")
         .whitelisted_type("Darknet")
+        .whitelisted_type("DarknetConfig")
         .whitelisted_type("InputImage")
         .whitelisted_type("image")
         .whitelisted_function("darknet_new")

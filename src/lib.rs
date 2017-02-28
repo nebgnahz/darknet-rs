@@ -49,9 +49,18 @@ pub struct Darknet {
 }
 
 impl Darknet {
-    pub fn new() -> Self {
+    pub fn new(data: &str, network_file: &str, weight_file: &str, label_file: &str) -> Self {
+        let config = ffi::DarknetConfig {
+            datacfg: data.as_ptr(),
+            network_file: network_file.as_ptr(),
+            weight_file: weight_file.as_ptr(),
+            label_file: label_file.as_ptr(),
+        };
+
         Darknet {
-            inner: unsafe {darknet_new() },
+            inner: unsafe {
+                darknet_new(config)
+            },
         }
     }
 
@@ -95,7 +104,7 @@ impl Drop for Darknet {
 }
 
 extern "C" {
-    fn darknet_new() -> *mut ffi::Darknet;
+    fn darknet_new(config: ffi::DarknetConfig) -> *mut ffi::Darknet;
     fn darknet_drop(dn: *mut ffi::Darknet);
     fn darknet_detect(dn: *mut ffi::Darknet, image: ffi::image) -> ffi::Detections;
     fn detections_drop(dt: ffi::Detections);
