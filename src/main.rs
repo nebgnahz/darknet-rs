@@ -33,7 +33,8 @@ fn main() {
                               concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/coco.names"));
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/dog.jpg");
     let image = cv::Mat::from_path(path, cv::imgcodecs::ImreadModes::ImreadColor)
-        .expect("failed to load image");
+        .expect("failed to load image")
+        .cvt_color(cv::imgproc::ColorConversionCodes::BGR2RGB);
     let image = cv_mat_to_darknet_image(&image);
     let detections = dn.detect(image);
     detections.print_csv();

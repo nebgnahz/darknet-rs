@@ -1,5 +1,5 @@
 pub mod ffi;
-use std::ffi::CStr;
+use std::ffi::{CStr, CString};
 
 #[repr(C)]
 #[derive(Debug)]
@@ -64,12 +64,17 @@ pub struct Darknet {
 }
 
 impl Darknet {
-    pub fn new(data: &str, network_file: &str, weight_file: &str, label_file: &str) -> Self {
+    pub fn new(data: &str, network: &str, weight: &str, label: &str) -> Self {
+        let datacfg_cstring = CString::new(data).expect("cstring failed");
+        let network_cstring = CString::new(network).expect("cstring failed");
+        let weight_cstring = CString::new(weight).expect("cstring failed");
+        let label_cstring = CString::new(label).expect("cstring failed");
+
         let config = ffi::DarknetConfig {
-            datacfg: data.as_ptr(),
-            network_file: network_file.as_ptr(),
-            weight_file: weight_file.as_ptr(),
-            label_file: label_file.as_ptr(),
+            datacfg: datacfg_cstring.as_ptr(),
+            network_file: network_cstring.as_ptr(),
+            weight_file: weight_cstring.as_ptr(),
+            label_file: label_cstring.as_ptr(),
         };
 
         Darknet {
