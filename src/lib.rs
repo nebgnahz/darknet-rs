@@ -25,6 +25,21 @@ pub struct Detections {
     proc_time_in_ms: f32,
 }
 
+impl Detection {
+    fn csv(&self) -> String {
+        format!("{}, {}, {}, {}, {}, {}",
+                self.label, self.prob, self.rect.x, self.rect.y, self.rect.w, self.rect.h)
+    }
+}
+
+impl Detections {
+    pub fn print_csv(&self) {
+        for i in 0..self.num {
+            println!("{}, {}", self.proc_time_in_ms, self.detections[i].csv());
+        }
+    }
+}
+
 #[repr(C)]
 pub struct InputImage {
     inner: ffi::image,

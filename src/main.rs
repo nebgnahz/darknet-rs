@@ -30,11 +30,11 @@ fn main() {
     let mut dn = Darknet::new(concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/cfg/coco.data"),
                               concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/cfg/yolo.cfg"),
                               concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/yolo.weights"),
-                              "");
-    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/person.jpg");
+                              concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/coco.names"));
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/darknet-sys/data/dog.jpg");
     let image = cv::Mat::from_path(path, cv::imgcodecs::ImreadModes::ImreadColor)
         .expect("failed to load image");
     let image = cv_mat_to_darknet_image(&image);
     let detections = dn.detect(image);
-    println!("{:?}", detections);
+    detections.print_csv();
 }
