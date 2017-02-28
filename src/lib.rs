@@ -27,7 +27,7 @@ pub struct Detections {
 }
 
 impl Detection {
-    fn csv(&self) -> String {
+    pub fn csv(&self) -> String {
         format!("{}, {}, {}, {}, {}, {}",
                 self.label, self.prob, self.rect.x, self.rect.y, self.rect.w, self.rect.h)
     }
