@@ -1,5 +1,6 @@
 pub mod ffi;
 use std::ffi::{CStr, CString};
+use std::fmt::Write;
 
 #[repr(C)]
 #[derive(Debug)]
@@ -11,7 +12,7 @@ pub struct Rect {
 }
 
 #[derive(Debug)]
-struct Detection {
+pub struct Detection {
     rect: Rect,
     label: String,
     prob: f32
@@ -20,9 +21,9 @@ struct Detection {
 #[repr(C)]
 #[derive(Debug)]
 pub struct Detections {
-    num: usize,
-    detections: Vec<Detection>,
-    proc_time_in_ms: f32,
+    pub num: usize,
+    pub detections: Vec<Detection>,
+    pub proc_time_in_ms: f32,
 }
 
 impl Detection {
@@ -33,10 +34,12 @@ impl Detection {
 }
 
 impl Detections {
-    pub fn print_csv(&self) {
+    pub fn csv(&self) -> String {
+        let mut res = String::new();
         for i in 0..self.num {
-            println!("{}, {}", self.proc_time_in_ms, self.detections[i].csv());
+            write!(&mut res, "{}, {}\n", self.proc_time_in_ms, self.detections[i].csv()).unwrap();
         }
+        res
     }
 }
 

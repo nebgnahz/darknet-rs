@@ -37,5 +37,5 @@ fn main() {
         .cvt_color(cv::imgproc::ColorConversionCodes::BGR2RGB);
     let image = cv_mat_to_darknet_image(&image);
     let detections = dn.detect(image);
-    detections.print_csv();
+    println!("{}", detections.csv());
 }
