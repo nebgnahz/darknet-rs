@@ -113,7 +113,7 @@ impl Darknet {
         Detections {
             num: num as usize,
             detections: detections,
-            proc_time_in_ms: c_detections.proc_time_in_ms,
+            proc_time_in_ms: c_detections.proc_time_in_ms * 1000,
         }
     }
 }
