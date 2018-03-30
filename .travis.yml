@@ -1,12 +1,16 @@
+sudo: required
 language: rust
 dist: trusty
 
 before_install:
+  - sudo -E ./.ci/install_cuda.sh
   - cargo clean
+  - make -C darknet-sys GPU=1
 
 script:
   - cargo build
   - cargo build --features gen
+  - cargo build --features cuda
   - cargo fmt -- --write-mode=diff;
   - cargo doc --no-deps
 
