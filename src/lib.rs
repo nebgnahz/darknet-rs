@@ -1,143 +1,228 @@
-pub mod ffi;
-use std::ffi::{CStr, CString};
-use std::fmt::Write;
+//! Bindings for Darknet
 
-#[repr(C)]
-#[derive(Debug)]
-pub struct Rect {
-    x: f32,
-    y: f32,
-    w: f32,
-    h: f32,
+#![deny(missing_docs)]
+#![deny(missing_debug_implementations)]
+#![deny(missing_copy_implementations)]
+#![deny(trivial_casts)]
+#![deny(trivial_numeric_casts)]
+#![deny(unused_import_braces)]
+#![deny(unused_qualifications)]
+
+#[macro_use]
+extern crate failure;
+
+mod ffi {
+    #![allow(dead_code)]
+    #![allow(non_upper_case_globals)]
+    #![allow(non_camel_case_types)]
+    #![allow(non_snake_case)]
+
+    include!("ffi.rs");
 }
 
-#[derive(Debug)]
-pub struct Detection {
-    rect: Rect,
-    label: String,
-    prob: f32,
-}
+use std::ffi::CString;
+use std::path::Path;
+use failure::Error;
 
-#[repr(C)]
-#[derive(Debug)]
-pub struct Detections {
-    pub num: usize,
-    pub detections: Vec<Detection>,
-    pub proc_time_in_ms: f32,
-}
+mod errors {
+    use std::path::PathBuf;
 
-impl Detection {
-    pub fn csv(&self) -> String {
-        format!("{}, {}, {}, {}, {}, {}",
-                self.label,
-                self.prob,
-                self.rect.x,
-                self.rect.y,
-                self.rect.w,
-                self.rect.h)
+    #[derive(Debug, Fail)]
+    /// Custom errors.
+    pub enum DarknetError {
+        #[fail(display = "invalid path: {:?}", _0)]
+        /// Indicates that path was invalid
+        InvalidPath(PathBuf),
     }
 }
 
-impl Detections {
-    pub fn csv(&self) -> String {
-        let mut res = String::new();
-        for i in 0..self.num {
-            write!(&mut res,
-                   "{}, {}\n",
-                   self.proc_time_in_ms,
-                   self.detections[i].csv())
-                .unwrap();
+/// Network
+#[derive(Debug)]
+pub struct Network {
+    net: *mut ffi::network,
+}
+
+fn path_to_cstring<P: AsRef<Path>>(path: P) -> Result<CString, Error> {
+    let path = path.as_ref();
+    let x = path.to_str()
+        .ok_or(errors::DarknetError::InvalidPath(path.into()))?;
+    let result = CString::new(x)?;
+    Ok(result)
+}
+
+/// Perform detection.
+pub fn detect<P: AsRef<Path>>(
+    mut network: Network,
+    meta: Meta,
+    image: P,
+    thresh: f32,
+    hier_thresh: f32,
+    nms: f32,
+) -> Result<Vec<Detection>, Error> {
+    let image = Image::load(image)?;
+    network.predict_image(image);
+    let dets = network.get_network_boxes(image.w, image.h, thresh, hier_thresh);
+    println!("{:?}", dets);
+    let detections = dets.postprocess(nms, &meta);
+    Ok(detections)
+}
+
+impl Network {
+    /// Create a new network.
+    pub fn new<P: AsRef<Path>>(config: P, weight: P) -> Result<Self, Error> {
+        let config = path_to_cstring(config)?.into_raw();
+        let weight = path_to_cstring(weight)?.into_raw();
+        let net = unsafe { ffi::load_network(config, weight, 0) };
+        Ok(Network { net: net })
+    }
+
+    /// Return the width of the network.
+    pub fn width(&self) -> usize {
+        unsafe { ffi::network_width(self.net) as usize }
+    }
+
+    /// Return the height of the network.
+    pub fn height(&self) -> usize {
+        unsafe { ffi::network_height(self.net) as usize }
+    }
+
+    /// Perform prediction.
+    pub fn predict(&mut self, data: *mut f32) -> *mut f32 {
+        unsafe { ffi::network_predict(self.net, data) }
+    }
+
+    /// Perform prediction.
+    pub fn predict_image(&mut self, image: Image) -> *mut f32 {
+        unsafe { ffi::network_predict_image(self.net, image) }
+    }
+
+    /// Get the network boxes.
+    fn get_network_boxes(&mut self, w: i32, h: i32, thresh: f32, hier: f32) -> Detections_ {
+        let mut num = 0;
+        let det = unsafe {
+            ffi::get_network_boxes(
+                self.net,
+                w,
+                h,
+                thresh,
+                hier,
+                std::ptr::null_mut(),
+                0,
+                &mut num,
+            )
+        };
+        Detections_ {
+            inner: det,
+            num: num,
         }
+    }
+}
+
+impl Drop for Network {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::free_network(self.net);
+        }
+    }
+}
+
+/// Detection.
+#[derive(Debug, Copy, Clone)]
+pub struct Detection {
+    /// The class.
+    pub class: i32,
+    /// x coordinate.
+    pub x: f32,
+    /// y coordinate.
+    pub y: f32,
+    /// width.
+    pub w: f32,
+    /// height.
+    pub h: f32,
+    /// probability.
+    pub prob: f32,
+}
+
+/// Internal Detection.
+#[derive(Debug)]
+struct Detections_ {
+    inner: *mut ffi::detection,
+    num: i32,
+}
+
+impl Drop for Detections_ {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::free_detections(self.inner, self.num);
+        }
+    }
+}
+
+impl Detections_ {
+    /// Non-maximum suppression.
+    fn nms(&self, total: i32, classes: i32, thresh: f32) {
+        unsafe {
+            ffi::do_nms_obj(self.inner, total, classes, thresh);
+        }
+    }
+
+    /// Filter detection.
+    pub fn postprocess(&self, nms: f32, meta: &Meta) -> Vec<Detection> {
+        if nms > 0.0 {
+            self.nms(self.num, meta.classes, nms);
+        }
+
+        let mut res = Vec::new();
+        for j in 0..(self.num as isize) {
+            let d = unsafe { *self.inner.offset(j) };
+            let bbox = d.bbox;
+            let probs = d.prob;
+            for i in 0..(meta.classes as isize) {
+                let p = unsafe { *probs.offset(i) };
+                if p > 0.0 {
+                    let ffi::box_ { x, y, w, h } = bbox;
+                    res.push(Detection {
+                        class: i as i32,
+                        x: x,
+                        y: y,
+                        w: w,
+                        h: h,
+                        prob: p,
+                    });
+                }
+            }
+        }
+
+        res.sort_by(|a, b| b.prob.partial_cmp(&a.prob).unwrap());
         res
     }
 }
 
-#[repr(C)]
-pub struct InputImage {
-    inner: ffi::image,
-}
+/// Metadata.
+pub type Meta = ffi::metadata;
 
-impl Drop for InputImage {
-    fn drop(&mut self) {
-        unsafe { free_image(self.inner) }
+impl Meta {
+    /// Load a new metadata.
+    pub fn new<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        let meta = unsafe { ffi::get_metadata(filename) };
+        Ok(meta)
     }
 }
 
-impl InputImage {
-    pub fn new(w: i32, h: i32, c: i32) -> InputImage {
-        InputImage { inner: unsafe { make_image(w, h, c) } }
+/// Image
+pub type Image = ffi::image;
+
+impl Image {
+    /// Create a new image.
+    pub fn new(w: i32, h: i32, c: i32) -> Self {
+        unsafe { ffi::make_image(w, h, c) }
     }
 
-    pub fn data_mut(&mut self) -> *mut f32 {
-        self.inner.data
+    /// Load a new image.
+    pub fn load<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        let img = unsafe { ffi::load_image(filename, 0, 0, 0) };
+        Ok(img)
     }
-}
-
-pub struct Darknet {
-    inner: *mut ffi::Darknet,
-}
-
-impl Darknet {
-    pub fn new(data: &str, network: &str, weight: &str, label: &str) -> Self {
-        let datacfg_cstring = CString::new(data).expect("cstring failed");
-        let network_cstring = CString::new(network).expect("cstring failed");
-        let weight_cstring = CString::new(weight).expect("cstring failed");
-        let label_cstring = CString::new(label).expect("cstring failed");
-
-        let config = ffi::DarknetConfig {
-            datacfg: datacfg_cstring.as_ptr(),
-            network_file: network_cstring.as_ptr(),
-            weight_file: weight_cstring.as_ptr(),
-            label_file: label_cstring.as_ptr(),
-        };
-
-        Darknet { inner: unsafe { darknet_new(config) } }
-    }
-
-    pub fn detect(&mut self, image: InputImage) -> Detections {
-        let c_detections = unsafe { darknet_detect(self.inner, image.inner) };
-        let num = c_detections.num;
-        let mut detections = Vec::with_capacity(num as usize);
-        for i in 0..(num as isize) {
-            let label = unsafe {
-                CStr::from_ptr(*c_detections.labels.offset(i)).to_string_lossy().into_owned()
-            };
-            let d = unsafe {
-                Detection {
-                    label: label,
-                    prob: *(c_detections.probs.offset(i)),
-                    rect: Rect {
-                        x: (*c_detections.rects.offset(i)).x,
-                        y: (*c_detections.rects.offset(i)).y,
-                        w: (*c_detections.rects.offset(i)).w,
-                        h: (*c_detections.rects.offset(i)).h,
-                    },
-                }
-            };
-            detections.push(d);
-        }
-        unsafe { detections_drop(c_detections) }
-        Detections {
-            num: num as usize,
-            detections: detections,
-            proc_time_in_ms: c_detections.proc_time_in_ms * 1000.0,
-        }
-    }
-}
-
-impl Drop for Darknet {
-    fn drop(&mut self) {
-        unsafe {
-            darknet_drop(self.inner);
-        }
-    }
-}
-
-extern "C" {
-    fn darknet_new(config: ffi::DarknetConfig) -> *mut ffi::Darknet;
-    fn darknet_drop(dn: *mut ffi::Darknet);
-    fn darknet_detect(dn: *mut ffi::Darknet, image: ffi::image) -> ffi::Detections;
-    fn detections_drop(dt: ffi::Detections);
-    fn make_image(w: i32, h: i32, c: i32) -> ffi::image;
-    fn free_image(image: ffi::image);
 }
