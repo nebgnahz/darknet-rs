@@ -5,13 +5,12 @@ dist: trusty
 before_install:
   - sudo -E ./.ci/install_cuda.sh
   - cargo clean
-  - make -C darknet-sys GPU=1
+  - make -C darknet-sys
 
 script:
   - cargo build
   - cargo build --features gen
-  - cargo build --features cuda
-  - cargo fmt -- --write-mode=diff;
+  # - cargo fmt -- --write-mode=diff;
   - cargo doc --no-deps
 
 notifications:
