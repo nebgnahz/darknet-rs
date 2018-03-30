@@ -1,6 +1,6 @@
 # darknet-rs
 
-[![Build Status][travis-build]][travis-build]
+[![Build Status][travis-badge]][travis-build]
 
 [API documentations](https://nebgnahz.github.io/darknet-rs/darknet/)
 
