@@ -72,8 +72,8 @@ pub fn detect<'a, P: AsRef<Path>>(
     nms: f32,
 ) -> Result<Vec<Detection<'a>>, Error> {
     let image = Image::load(image)?;
-    network.predict_image(image);
-    let dets = network.get_network_boxes(image.w, image.h, thresh, hier_thresh);
+    network.predict_image(&image);
+    let dets = network.get_network_boxes(image.0.w, image.0.h, thresh, hier_thresh);
     let detections = dets.postprocess(nms, meta);
     Ok(detections)
 }
@@ -103,8 +103,8 @@ impl Network {
     }
 
     /// Perform prediction.
-    pub fn predict_image(&mut self, image: Image) -> *mut f32 {
-        unsafe { ffi::network_predict_image(self.net, image) }
+    pub fn predict_image(&mut self, image: &Image) -> *mut f32 {
+        unsafe { ffi::network_predict_image(self.net, image.0) }
     }
 
     /// Get the network boxes.
@@ -136,6 +136,9 @@ impl Drop for Network {
         }
     }
 }
+
+/// A rectangle type.
+pub type Rect = ffi::box_;
 
 /// Detection.
 #[derive(Debug, Copy, Clone)]
@@ -246,18 +249,69 @@ impl Meta {
 }
 
 /// Image
-pub type Image = ffi::image;
+#[derive(Debug)]
+pub struct Image(ffi::image);
 
 impl Image {
     /// Create a new image.
     pub fn new(w: i32, h: i32, c: i32) -> Self {
-        unsafe { ffi::make_image(w, h, c) }
+        Image(unsafe { ffi::make_image(w, h, c) })
     }
 
     /// Load a new image.
     pub fn load<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
         let filename = path_to_cstring(filename)?.into_raw();
         let img = unsafe { ffi::load_image(filename, 0, 0, 0) };
-        Ok(img)
+        Ok(Image(img))
+    }
+
+    /// Load a new image with color.
+    pub fn load_color<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        let img = unsafe { ffi::load_image_color(filename, 0, 0) };
+        Ok(Image(img))
+    }
+
+    /// Resize and return a new image.
+    pub fn resize(&self, w: i32, h: i32) -> Image {
+        Image(unsafe { ffi::resize_image(self.0, w, h) })
+    }
+}
+
+impl Drop for Image {
+    fn drop(&mut self) {
+        unsafe {
+            ffi::free_image(self.0);
+        }
+    }
+}
+
+/// Groundtruth.
+#[derive(Debug)]
+pub struct Groundtruth {
+    boxes: Vec<ffi::box_label>,
+}
+
+impl Groundtruth {
+    /// Load a new label.
+    pub fn load<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        let mut num = 0;
+        let truth = unsafe { ffi::read_boxes(filename, &mut num) };
+
+        let truth = (0..num)
+            .map(|i| unsafe { *(truth.offset(i as isize)) })
+            .collect();
+        Ok(Groundtruth { boxes: truth })
+    }
+
+    /// Return the rectangle box at a particular index.
+    pub fn box_at(&self, i: usize) -> Rect {
+        Rect {
+            x: self.boxes[i].x,
+            y: self.boxes[i].y,
+            w: self.boxes[i].w,
+            h: self.boxes[i].h,
+        }
     }
 }
