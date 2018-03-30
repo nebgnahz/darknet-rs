@@ -64,7 +64,7 @@ fn path_to_cstring<P: AsRef<Path>>(path: P) -> Result<CString, Error> {
 
 /// Perform detection.
 pub fn detect<'a, P: AsRef<Path>>(
-    mut network: Network,
+    network: &Network,
     meta: &'a Meta,
     image: P,
     thresh: f32,
@@ -98,17 +98,17 @@ impl Network {
     }
 
     /// Perform prediction.
-    pub fn predict(&mut self, data: *mut f32) -> *mut f32 {
+    pub fn predict(&self, data: *mut f32) -> *mut f32 {
         unsafe { ffi::network_predict(self.net, data) }
     }
 
     /// Perform prediction.
-    pub fn predict_image(&mut self, image: &Image) -> *mut f32 {
+    pub fn predict_image(&self, image: &Image) -> *mut f32 {
         unsafe { ffi::network_predict_image(self.net, image.0) }
     }
 
     /// Get the network boxes.
-    fn get_network_boxes(&mut self, w: i32, h: i32, thresh: f32, hier: f32) -> Detections_ {
+    fn get_network_boxes(&self, w: i32, h: i32, thresh: f32, hier: f32) -> Detections_ {
         let mut num = 0;
         let det = unsafe {
             ffi::get_network_boxes(
