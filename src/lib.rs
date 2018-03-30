@@ -32,7 +32,7 @@ pub mod ffi {
     include!("ffi.rs");
 }
 
-use std::ffi::CString;
+use std::ffi::{CStr, CString};
 use std::path::Path;
 use failure::Error;
 
@@ -63,18 +63,18 @@ fn path_to_cstring<P: AsRef<Path>>(path: P) -> Result<CString, Error> {
 }
 
 /// Perform detection.
-pub fn detect<P: AsRef<Path>>(
+pub fn detect<'a, P: AsRef<Path>>(
     mut network: Network,
-    meta: Meta,
+    meta: &'a Meta,
     image: P,
     thresh: f32,
     hier_thresh: f32,
     nms: f32,
-) -> Result<Vec<Detection>, Error> {
+) -> Result<Vec<Detection<'a>>, Error> {
     let image = Image::load(image)?;
     network.predict_image(image);
     let dets = network.get_network_boxes(image.w, image.h, thresh, hier_thresh);
-    let detections = dets.postprocess(nms, &meta);
+    let detections = dets.postprocess(nms, meta);
     Ok(detections)
 }
 
@@ -139,7 +139,7 @@ impl Drop for Network {
 
 /// Detection.
 #[derive(Debug, Copy, Clone)]
-pub struct Detection {
+pub struct Detection<'a> {
     /// The class.
     pub class: i32,
     /// x coordinate.
@@ -152,6 +152,8 @@ pub struct Detection {
     pub h: f32,
     /// probability.
     pub prob: f32,
+    /// name.
+    pub name: &'a str,
 }
 
 /// Internal Detection.
@@ -178,9 +180,9 @@ impl Detections_ {
     }
 
     /// Filter detection.
-    pub fn postprocess(&self, nms: f32, meta: &Meta) -> Vec<Detection> {
+    pub fn postprocess<'a>(&self, nms: f32, meta: &'a Meta) -> Vec<Detection<'a>> {
         if nms > 0.0 {
-            self.nms(self.num, meta.classes, nms);
+            self.nms(self.num, meta.num_classes(), nms);
         }
 
         let mut res = Vec::new();
@@ -188,7 +190,7 @@ impl Detections_ {
             let d = unsafe { *self.inner.offset(j) };
             let bbox = d.bbox;
             let probs = d.prob;
-            for i in 0..(meta.classes as isize) {
+            for i in 0..(meta.num_classes() as isize) {
                 let p = unsafe { *probs.offset(i) };
                 if p > 0.0 {
                     let ffi::box_ { x, y, w, h } = bbox;
@@ -199,6 +201,7 @@ impl Detections_ {
                         w: w,
                         h: h,
                         prob: p,
+                        name: &meta.names[i as usize],
                     });
                 }
             }
@@ -210,14 +213,35 @@ impl Detections_ {
 }
 
 /// Metadata.
-pub type Meta = ffi::metadata;
+#[derive(Debug)]
+pub struct Meta {
+    names: Vec<String>,
+}
+
+impl From<ffi::metadata> for Meta {
+    fn from(meta: ffi::metadata) -> Self {
+        let names = (0..(meta.classes as isize))
+            .map(|i| unsafe {
+                CStr::from_ptr(*(meta.names.offset(i)))
+                    .to_string_lossy()
+                    .into_owned()
+            })
+            .collect();
+        Meta { names: names }
+    }
+}
 
 impl Meta {
     /// Load a new metadata.
     pub fn new<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
         let filename = path_to_cstring(filename)?.into_raw();
         let meta = unsafe { ffi::get_metadata(filename) };
-        Ok(meta)
+        Ok(meta.into())
+    }
+
+    /// Return the number of classes.
+    pub fn num_classes(&self) -> i32 {
+        self.names.len() as i32
     }
 }
 
