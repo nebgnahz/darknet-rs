@@ -11,7 +11,15 @@
 #[macro_use]
 extern crate failure;
 
+/// FFI bindings.
 pub mod ffi {
+    #![allow(missing_docs)]
+    #![allow(missing_debug_implementations)]
+    #![allow(missing_copy_implementations)]
+    #![allow(trivial_casts)]
+    #![allow(trivial_numeric_casts)]
+    #![allow(unused_import_braces)]
+    #![allow(unused_qualifications)]
     #![allow(dead_code)]
     #![allow(non_upper_case_globals)]
     #![allow(non_camel_case_types)]
