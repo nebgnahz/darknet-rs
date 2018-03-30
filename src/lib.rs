@@ -17,6 +17,10 @@ mod ffi {
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
 
+    #[cfg(feature = "gen")]
+    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+
+    #[cfg(not(feature = "gen"))]
     include!("ffi.rs");
 }
 
@@ -62,7 +66,6 @@ pub fn detect<P: AsRef<Path>>(
     let image = Image::load(image)?;
     network.predict_image(image);
     let dets = network.get_network_boxes(image.w, image.h, thresh, hier_thresh);
-    println!("{:?}", dets);
     let detections = dets.postprocess(nms, &meta);
     Ok(detections)
 }

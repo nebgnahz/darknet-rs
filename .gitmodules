@@ -1,4 +1,0 @@
-[submodule "darknet"]
-	path = darknet-sys
-	url = https://github.com/nebgnahz/darknet.git
-    branch = rs

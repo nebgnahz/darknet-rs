@@ -6,6 +6,12 @@ authors = ["Ben Zhang <benzh@cs.berkeley.edu>"]
 [dependencies]
 failure = "0.1"
 
+[build-dependencies]
+bindgen = { version = "0.35", optional = true }
+
+[features]
+gen = [ "bindgen" ]
+
 [[bin]]
 name = "main"
 doc = false
