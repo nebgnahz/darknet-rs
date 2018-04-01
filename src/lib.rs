@@ -34,7 +34,7 @@ pub mod ffi {
 
 use std::ffi::{CStr, CString};
 use std::path::Path;
-use failure::Error;
+pub use failure::Error;
 
 mod errors {
     use std::path::PathBuf;
@@ -62,20 +62,28 @@ fn path_to_cstring<P: AsRef<Path>>(path: P) -> Result<CString, Error> {
     Ok(result)
 }
 
+/// Perform simple detection with default threshold.
+#[inline]
+pub fn simple_detect(network: &Network, meta: &Meta, image: &Image) -> Vec<Detection> {
+    let thres = 0.5;
+    let hier_thresh = 0.5;
+    let nms = 0.45;
+    detect(network, meta, image, thres, hier_thresh, nms)
+}
+
 /// Perform detection.
-pub fn detect<'a, P: AsRef<Path>>(
+pub fn detect(
     network: &Network,
-    meta: &'a Meta,
-    image: P,
+    meta: &Meta,
+    image: &Image,
     thresh: f32,
     hier_thresh: f32,
     nms: f32,
-) -> Result<Vec<Detection<'a>>, Error> {
-    let image = Image::load(image)?;
-    network.predict_image(&image);
+) -> Vec<Detection> {
+    network.predict_image(image);
     let dets = network.get_network_boxes(image.0.w, image.0.h, thresh, hier_thresh);
     let detections = dets.postprocess(nms, meta);
-    Ok(detections)
+    detections
 }
 
 impl Network {
@@ -141,8 +149,8 @@ impl Drop for Network {
 pub type Rect = ffi::box_;
 
 /// Detection.
-#[derive(Debug, Copy, Clone)]
-pub struct Detection<'a> {
+#[derive(Debug, Clone)]
+pub struct Detection {
     /// The class.
     pub class: i32,
     /// x coordinate.
@@ -156,7 +164,7 @@ pub struct Detection<'a> {
     /// probability.
     pub prob: f32,
     /// name.
-    pub name: &'a str,
+    pub name: String,
 }
 
 /// Internal Detection.
@@ -183,7 +191,7 @@ impl Detections_ {
     }
 
     /// Filter detection.
-    pub fn postprocess<'a>(&self, nms: f32, meta: &'a Meta) -> Vec<Detection<'a>> {
+    pub fn postprocess(&self, nms: f32, meta: &Meta) -> Vec<Detection> {
         if nms > 0.0 {
             self.nms(self.num, meta.num_classes(), nms);
         }
@@ -204,7 +212,7 @@ impl Detections_ {
                         w: w,
                         h: h,
                         prob: p,
-                        name: &meta.names[i as usize],
+                        name: meta.class_name(i as usize).to_string(),
                     });
                 }
             }
@@ -246,11 +254,16 @@ impl Meta {
     pub fn num_classes(&self) -> i32 {
         self.names.len() as i32
     }
+
+    /// Return the class name identified by the classification index.
+    pub fn class_name(&self, i: usize) -> &str {
+        &self.names[i]
+    }
 }
 
 /// Image
 #[derive(Debug)]
-pub struct Image(ffi::image);
+pub struct Image(pub ffi::image);
 
 impl Image {
     /// Create a new image.
