@@ -11,7 +11,7 @@ bindgen = { version = "0.35", optional = true }
 
 [features]
 gen = [ "bindgen" ]
-cuda = [ ]
+cuda = []
 
 [[bin]]
 name = "main"

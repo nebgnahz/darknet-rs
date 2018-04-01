@@ -148,7 +148,8 @@ impl Drop for Network {
 /// A rectangle type.
 pub type Rect = ffi::box_;
 
-/// Detection.
+/// Detection. Note that the bounding box is centered at (x, y) and have width
+/// `w` and height `h`.
 #[derive(Debug, Clone)]
 pub struct Detection {
     /// The class.
@@ -262,7 +263,7 @@ impl Meta {
 }
 
 /// Image
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Image(pub ffi::image);
 
 impl Image {
@@ -283,6 +284,35 @@ impl Image {
         let filename = path_to_cstring(filename)?.into_raw();
         let img = unsafe { ffi::load_image_color(filename, 0, 0) };
         Ok(Image(img))
+    }
+
+    /// Draw a box based on the detection.
+    pub fn draw_box(&mut self, d: &Detection, w: i32, r: f32, g: f32, b: f32) {
+        let x1 = d.x - d.w / 2.;
+        let x2 = d.x + d.w / 2.;
+        let y1 = d.y - d.h / 2.;
+        let y2 = d.y + d.h / 2.;
+
+        unsafe {
+            ffi::draw_box_width(
+                self.0,
+                x1 as i32,
+                y1 as i32,
+                x2 as i32,
+                y2 as i32,
+                w,
+                r,
+                g,
+                b,
+            )
+        }
+    }
+
+    /// Save the image.
+    pub fn save<P: AsRef<Path>>(&self, filename: P) -> Result<(), Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        unsafe { ffi::save_image(self.0, filename) };
+        Ok(())
     }
 
     /// Resize and return a new image.
