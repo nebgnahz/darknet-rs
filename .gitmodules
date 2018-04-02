@@ -1,3 +1,3 @@
 [submodule "darknet-sys"]
 	path = darknet-sys
-	url = https://github.com/pjreddie/darknet
+	url = git@github.com:nebgnahz/darknet

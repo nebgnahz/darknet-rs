@@ -14199,10 +14199,7 @@ extern "C" {
 }
 extern "C" {
     #[link_name = "\u{1}_encode_image_jpg"]
-    pub fn encode_image_jpg(
-        p: image,
-        buf: *mut *mut ::std::os::raw::c_void,
-    ) -> ::std::os::raw::c_int;
+    pub fn encode_image_jpg(p: image, buf: *const ::std::os::raw::c_void) -> ::std::os::raw::c_int;
 }
 extern "C" {
     #[link_name = "\u{1}_save_image_jpg"]
