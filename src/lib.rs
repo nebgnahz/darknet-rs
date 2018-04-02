@@ -286,6 +286,12 @@ impl Image {
         Ok(Image(img))
     }
 
+    /// Decode a new image (always color, 3 channels).
+    pub fn decode_jpg(buf: &[u8]) -> Self {
+        let image = unsafe { ffi::decode_image_jpg(buf.as_ptr(), buf.len() as i32, 3) };
+        Image(image)
+    }
+
     /// Draw a box based on the detection.
     pub fn draw_box(&mut self, d: &Detection, w: i32, r: f32, g: f32, b: f32) {
         let x1 = d.x - d.w / 2.;
@@ -326,9 +332,7 @@ impl Image {
     pub fn encode_jpg(&self) -> Vec<u8> {
         let cap = (self.0.w * self.0.h * self.0.c) as usize;
         let mut data: Vec<u8> = Vec::with_capacity(cap);
-        let size = unsafe {
-            ffi::encode_image_jpg(self.0, data.as_ptr() as *const ::std::os::raw::c_void)
-        };
+        let size = unsafe { ffi::encode_image_jpg(self.0, data.as_ptr()) };
         unsafe {
             data.set_len(size as usize);
         }

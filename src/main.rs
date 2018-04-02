@@ -24,5 +24,8 @@ fn run() -> Result<(), Error> {
         let mut buffer = ::std::fs::File::create("foo.jpg")?;
         buffer.write_all(&data)?;
     }
+
+    let decoded = Image::decode_jpg(&data);
+    decoded.save_jpg("decoded")?;
     Ok(())
 }
