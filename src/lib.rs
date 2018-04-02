@@ -35,6 +35,7 @@ pub mod ffi {
 use std::ffi::{CStr, CString};
 use std::path::Path;
 pub use failure::Error;
+use std::os::raw::c_void;
 
 mod errors {
     use std::path::PathBuf;
@@ -313,6 +314,27 @@ impl Image {
         let filename = path_to_cstring(filename)?.into_raw();
         unsafe { ffi::save_image(self.0, filename) };
         Ok(())
+    }
+
+    /// Save the image as jpg.
+    pub fn save_jpg<P: AsRef<Path>>(&self, filename: P) -> Result<(), Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        unsafe { ffi::save_image_jpg(self.0, filename) };
+        Ok(())
+    }
+
+    /// Save the image as jpg.
+    pub fn encode_jpg(&self) -> Vec<u8> {
+        let p: *mut u8 = std::ptr::null_mut();
+        let pp = &mut (p as *mut c_void);
+        let size = unsafe { ffi::encode_image_jpg(self.0, pp) };
+        println!("{}", size);
+        unsafe {
+            print!("{:x}", *(p.offset(0)));
+            print!("{:x}", *(p.offset(1)));
+            print!("{:x}", *(p.offset(2)));
+        }
+        unsafe { Vec::from_raw_parts(p, size as usize, size as usize) }
     }
 
     /// Resize and return a new image.

@@ -14198,8 +14198,19 @@ extern "C" {
     );
 }
 extern "C" {
+    #[link_name = "\u{1}_encode_image_jpg"]
+    pub fn encode_image_jpg(
+        p: image,
+        buf: *mut *mut ::std::os::raw::c_void,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[link_name = "\u{1}_save_image_jpg"]
+    pub fn save_image_jpg(p: image, name: *const ::std::os::raw::c_char);
+}
+extern "C" {
     #[link_name = "\u{1}_save_image_png"]
-    pub fn save_image_png(im: image, name: *const ::std::os::raw::c_char);
+    pub fn save_image_png(p: image, name: *const ::std::os::raw::c_char);
 }
 extern "C" {
     #[link_name = "\u{1}_get_next_batch"]
