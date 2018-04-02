@@ -14198,8 +14198,25 @@ extern "C" {
     );
 }
 extern "C" {
+    #[link_name = "\u{1}_encode_image_jpg"]
+    pub fn encode_image_jpg(p: image, buf: *const ::std::os::raw::c_uchar)
+        -> ::std::os::raw::c_int;
+}
+extern "C" {
+    #[link_name = "\u{1}_decode_image_jpg"]
+    pub fn decode_image_jpg(
+        buf: *const ::std::os::raw::c_uchar,
+        len: ::std::os::raw::c_int,
+        channels: ::std::os::raw::c_int,
+    ) -> image;
+}
+extern "C" {
+    #[link_name = "\u{1}_save_image_jpg"]
+    pub fn save_image_jpg(p: image, name: *const ::std::os::raw::c_char);
+}
+extern "C" {
     #[link_name = "\u{1}_save_image_png"]
-    pub fn save_image_png(im: image, name: *const ::std::os::raw::c_char);
+    pub fn save_image_png(p: image, name: *const ::std::os::raw::c_char);
 }
 extern "C" {
     #[link_name = "\u{1}_get_next_batch"]
