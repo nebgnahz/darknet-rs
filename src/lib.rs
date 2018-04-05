@@ -266,6 +266,8 @@ impl Meta {
 #[derive(Debug, Clone)]
 pub struct Image(pub ffi::image);
 
+unsafe impl Send for Image {}
+
 impl Image {
     /// Create a new image.
     pub fn new(w: i32, h: i32, c: i32) -> Self {
