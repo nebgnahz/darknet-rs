@@ -29,7 +29,12 @@ pub mod ffi {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
     #[cfg(not(feature = "gen"))]
-    include!("ffi.rs");
+    #[cfg(target_os = "macos")]
+    include!("ffi_osx.rs");
+
+    #[cfg(not(feature = "gen"))]
+    #[cfg(target_os = "linux")]
+    include!("ffi_linux.rs");
 }
 
 use std::ffi::{CStr, CString};
