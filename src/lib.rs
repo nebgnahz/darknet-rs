@@ -351,6 +351,21 @@ impl Image {
     pub fn resize(&self, w: i32, h: i32) -> Image {
         Image(unsafe { ffi::resize_image(self.0, w, h) })
     }
+
+    /// Image width.
+    pub fn width(&self) -> i32 {
+        self.0.w
+    }
+
+    /// Image height.
+    pub fn height(&self) -> i32 {
+        self.0.h
+    }
+
+    /// Image channel.
+    pub fn channel(&self) -> i32 {
+        self.0.c
+    }
 }
 
 impl Drop for Image {
