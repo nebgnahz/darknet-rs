@@ -5,6 +5,7 @@ dist: trusty
 before_install:
   - cargo clean
   - make -C darknet-sys
+  - sudo cp darknet-sys/libdarknet.a /usr/lib
 
 script:
   - cargo build --features gen
