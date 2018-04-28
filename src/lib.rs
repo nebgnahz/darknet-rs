@@ -33,8 +33,14 @@ pub mod ffi {
     include!("ffi_osx.rs");
 
     #[cfg(not(feature = "gen"))]
+    #[cfg(not(feature = "nnpack"))]
     #[cfg(target_os = "linux")]
     include!("ffi_linux.rs");
+
+    #[cfg(not(feature = "gen"))]
+    #[cfg(feature = "nnpack")]
+    #[cfg(target_os = "linux")]
+    include!("ffi_linux_nnpack.rs");
 }
 
 use std::ffi::{CStr, CString};
@@ -57,38 +63,7 @@ mod errors {
 #[derive(Debug)]
 pub struct Network {
     net: *mut ffi::network,
-}
-
-fn path_to_cstring<P: AsRef<Path>>(path: P) -> Result<CString, Error> {
-    let path = path.as_ref();
-    let x = path.to_str()
-        .ok_or(errors::DarknetError::InvalidPath(path.into()))?;
-    let result = CString::new(x)?;
-    Ok(result)
-}
-
-/// Perform simple detection with default threshold.
-#[inline]
-pub fn simple_detect(network: &Network, meta: &Meta, image: &Image) -> Vec<Detection> {
-    let thres = 0.5;
-    let hier_thresh = 0.5;
-    let nms = 0.45;
-    detect(network, meta, image, thres, hier_thresh, nms)
-}
-
-/// Perform detection.
-pub fn detect(
-    network: &Network,
-    meta: &Meta,
-    image: &Image,
-    thresh: f32,
-    hier_thresh: f32,
-    nms: f32,
-) -> Vec<Detection> {
-    network.predict_image(image);
-    let dets = network.get_network_boxes(image.0.w, image.0.h, thresh, hier_thresh);
-    let detections = dets.postprocess(nms, meta);
-    detections
+    nnp_status: bool,
 }
 
 impl Network {
@@ -97,7 +72,21 @@ impl Network {
         let config = path_to_cstring(config)?.into_raw();
         let weight = path_to_cstring(weight)?.into_raw();
         let net = unsafe { ffi::load_network(config, weight, 0) };
-        Ok(Network { net: net })
+        Ok(Network {
+            net: net,
+            nnp_status: false,
+        })
+    }
+
+    #[cfg(feature = "nnpack")]
+    /// Initializes the network with a threadpool.
+    pub fn threadpool(&mut self, n: usize) {
+        if !self.nnp_status {
+            unsafe { ffi::nnp_initialize() };
+            self.nnp_status = true;
+        }
+
+        unsafe { (*self.net).threadpool = ffi::pthreadpool_create(n) }
     }
 
     /// Return the width of the network.
@@ -143,11 +132,57 @@ impl Network {
 }
 
 impl Drop for Network {
+    #[cfg(not(feature = "nnpack"))]
     fn drop(&mut self) {
         unsafe {
             ffi::free_network(self.net);
         }
     }
+
+    #[cfg(feature = "nnpack")]
+    fn drop(&mut self) {
+        if self.nnp_status {
+            unsafe {
+                ffi::pthreadpool_destroy((*self.net).threadpool);
+                ffi::nnp_deinitialize();
+            }
+        }
+        unsafe {
+            ffi::free_network(self.net);
+        }
+    }
+}
+
+fn path_to_cstring<P: AsRef<Path>>(path: P) -> Result<CString, Error> {
+    let path = path.as_ref();
+    let x = path.to_str()
+        .ok_or(errors::DarknetError::InvalidPath(path.into()))?;
+    let result = CString::new(x)?;
+    Ok(result)
+}
+
+/// Perform simple detection with default threshold.
+#[inline]
+pub fn simple_detect(network: &Network, meta: &Meta, image: &Image) -> Vec<Detection> {
+    let thres = 0.5;
+    let hier_thresh = 0.5;
+    let nms = 0.45;
+    detect(network, meta, image, thres, hier_thresh, nms)
+}
+
+/// Perform detection.
+pub fn detect(
+    network: &Network,
+    meta: &Meta,
+    image: &Image,
+    thresh: f32,
+    hier_thresh: f32,
+    nms: f32,
+) -> Vec<Detection> {
+    network.predict_image(image);
+    let dets = network.get_network_boxes(image.0.w, image.0.h, thresh, hier_thresh);
+    let detections = dets.postprocess(nms, meta);
+    detections
 }
 
 /// A rectangle type.
@@ -290,6 +325,16 @@ impl Image {
     pub fn load_color<P: AsRef<Path>>(filename: P) -> Result<Self, Error> {
         let filename = path_to_cstring(filename)?.into_raw();
         let img = unsafe { ffi::load_image_color(filename, 0, 0) };
+        Ok(Image(img))
+    }
+
+    /// Load a new image with multiple threads.
+    #[cfg(feature = "nnpack")]
+    pub fn load_threaded<P: AsRef<Path>>(filename: P, network: &Network) -> Result<Self, Error> {
+        let filename = path_to_cstring(filename)?.into_raw();
+        let img = unsafe {
+            ffi::load_image_thread(filename, 0, 0, (*network.net).c, (*network.net).threadpool)
+        };
         Ok(Image(img))
     }
 

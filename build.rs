@@ -22,8 +22,13 @@ fn gen() {}
 fn main() {
     gen();
 
-    println!("cargo:rustc-link-search=native=darknet-sys");
     println!("cargo:rustc-link-lib=darknet");
+
+    if cfg!(feature = "nnpack") {
+        println!("cargo:rustc-link-lib=nnpack");
+        println!("cargo:rustc-link-lib=pthreadpool");
+        println!("cargo:rustc-link-lib=pthread");
+    }
 
     if cfg!(feature = "cuda") {
         println!("cargo:rustc-link-search=native=/usr/local/cuda/lib");
