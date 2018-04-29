@@ -32,10 +32,10 @@ fn run() -> Result<(), Error> {
     std::env::set_current_dir("darknet-sys").unwrap();
 
     let mut network = Network::new("cfg/yolov2-tiny.cfg", "yolov2-tiny.weights")?;
-    network.threadpool(4);
+    network.create_threadpool(4);
 
     let meta = Meta::new("cfg/coco.data")?;
-    let mut image = Image::load_threaded("data/dog.jpg", &network)?;
+    let mut image = Image::load_threaded("data/dog.jpg", network.channel(), &network.threadpool())?;
     let dets = simple_detect(&network, &meta, &image);
     for d in &dets {
         image.draw_box(d, 1, 1.0, 0.0, 0.0);

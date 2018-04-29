@@ -68,7 +68,7 @@ pub struct Network {
 
 /// Threadpool.
 #[cfg(feature = "nnpack")]
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct ThreadPool {
     inner: ffi::pthreadpool_t,
 }
@@ -100,7 +100,7 @@ impl Network {
     /// Return a reference to the thread pool.
     pub fn threadpool(&mut self) -> ThreadPool {
         ThreadPool {
-            inner: self.net.threadpool,
+            inner: unsafe { (*self.net).threadpool },
         }
     }
 
@@ -114,6 +114,11 @@ impl Network {
         unsafe { ffi::network_height(self.net) as usize }
     }
 
+    /// Return the height of the network.
+    pub fn channel(&self) -> i32 {
+        unsafe { (*self.net).c }
+    }
+    
     /// Perform prediction.
     pub fn predict(&self, data: *mut f32) -> *mut f32 {
         unsafe { ffi::network_predict(self.net, data) }
@@ -351,7 +356,7 @@ impl Image {
         pool: &ThreadPool,
     ) -> Result<Self, Error> {
         let filename = path_to_cstring(filename)?.into_raw();
-        let img = unsafe { ffi::load_image_thread(filename, 0, 0, c, pool.inner) };
+        let img = unsafe { ffi::load_image_thread(filename, 0, 0, channel, pool.inner) };
         Ok(Image(img))
     }
 
