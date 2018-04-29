@@ -32,6 +32,7 @@ fn main() {
 
     if cfg!(feature = "cuda") {
         println!("cargo:rustc-link-search=native=/usr/local/cuda/lib");
+        println!("cargo:rustc-link-search=native=/usr/local/cuda/lib64");
         println!("cargo:rustc-link-lib=cuda");
         println!("cargo:rustc-link-lib=cudart");
         println!("cargo:rustc-link-lib=cublas");
