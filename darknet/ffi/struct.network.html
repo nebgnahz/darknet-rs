@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `network` struct in crate `darknet`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, network">
+
+    <title>darknet::ffi::network - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle">
+    
+    <link rel="stylesheet" type="text/css" href="../../dark.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css" id="themeStyle">
+    <script src="../../storage.js"></script>
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <div class="sidebar-menu">&#9776;</div>
+        
+        <p class='location'>Struct network</p><div class="sidebar-elems"><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.n">n</a><a href="#structfield.batch">batch</a><a href="#structfield.seen">seen</a><a href="#structfield.t">t</a><a href="#structfield.epoch">epoch</a><a href="#structfield.subdivisions">subdivisions</a><a href="#structfield.layers">layers</a><a href="#structfield.output">output</a><a href="#structfield.policy">policy</a><a href="#structfield.learning_rate">learning_rate</a><a href="#structfield.momentum">momentum</a><a href="#structfield.decay">decay</a><a href="#structfield.gamma">gamma</a><a href="#structfield.scale">scale</a><a href="#structfield.power">power</a><a href="#structfield.time_steps">time_steps</a><a href="#structfield.step">step</a><a href="#structfield.max_batches">max_batches</a><a href="#structfield.scales">scales</a><a href="#structfield.steps">steps</a><a href="#structfield.num_steps">num_steps</a><a href="#structfield.burn_in">burn_in</a><a href="#structfield.adam">adam</a><a href="#structfield.B1">B1</a><a href="#structfield.B2">B2</a><a href="#structfield.eps">eps</a><a href="#structfield.inputs">inputs</a><a href="#structfield.outputs">outputs</a><a href="#structfield.truths">truths</a><a href="#structfield.notruth">notruth</a><a href="#structfield.h">h</a><a href="#structfield.w">w</a><a href="#structfield.c">c</a><a href="#structfield.max_crop">max_crop</a><a href="#structfield.min_crop">min_crop</a><a href="#structfield.max_ratio">max_ratio</a><a href="#structfield.min_ratio">min_ratio</a><a href="#structfield.center">center</a><a href="#structfield.angle">angle</a><a href="#structfield.aspect">aspect</a><a href="#structfield.exposure">exposure</a><a href="#structfield.saturation">saturation</a><a href="#structfield.hue">hue</a><a href="#structfield.random">random</a><a href="#structfield.gpu_index">gpu_index</a><a href="#structfield.hierarchy">hierarchy</a><a href="#structfield.input">input</a><a href="#structfield.truth">truth</a><a href="#structfield.delta">delta</a><a href="#structfield.workspace">workspace</a><a href="#structfield.train">train</a><a href="#structfield.index">index</a><a href="#structfield.cost">cost</a><a href="#structfield.clip">clip</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Copy">Copy</a><a href="#impl-Clone">Clone</a></div></div><p class='location'><a href='../index.html'>darknet</a>::<wbr><a href='index.html'>ffi</a></p><script>window.sidebarCurrent = {name: 'network', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script></div>
+    </nav>
+
+    <div class="theme-picker">
+        <button id="theme-picker" aria-label="Pick another theme!">
+            <img src="../../brush.svg" width="18" alt="Pick another theme!">
+        </button>
+        <div id="theme-choices"></div>
+    </div>
+    <script src="../../theme.js"></script>
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>darknet</a>::<wbr><a href='index.html'>ffi</a>::<wbr><a class="struct" href=''>network</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/darknet/ffi_linux.rs.html#3808-3863' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'><div class="docblock attributes">#[repr(C)]
+</div>pub struct network {
+    pub n: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub batch: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub seen: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>,
+    pub t: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub epoch: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub subdivisions: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub layers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../../darknet/ffi/struct.layer.html" title="struct darknet::ffi::layer">layer</a>,
+    pub output: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub policy: <a class="type" href="../../darknet/ffi/type.learning_rate_policy.html" title="type darknet::ffi::learning_rate_policy">learning_rate_policy</a>,
+    pub learning_rate: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub momentum: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub decay: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub gamma: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub scale: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub power: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub time_steps: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub step: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub max_batches: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub scales: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub steps: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub num_steps: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub burn_in: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub adam: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub B1: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub B2: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub eps: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub inputs: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub outputs: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub truths: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub notruth: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub h: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub w: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub c: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub max_crop: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub min_crop: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub max_ratio: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub min_ratio: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub center: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub angle: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub aspect: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub exposure: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub saturation: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub hue: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub random: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub gpu_index: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub hierarchy: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../../darknet/ffi/struct.tree.html" title="struct darknet::ffi::tree">tree</a>,
+    pub input: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub truth: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub delta: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub workspace: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub train: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub index: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a>,
+    pub cost: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+    pub clip: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>,
+}</pre><h2 id='fields' class='fields small-section-header'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.n" class="structfield small-section-header">
+                           <a href="#structfield.n" class="anchor field"></a>
+                           <span id="n.v" class='invisible'>
+                           <code>n: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.batch" class="structfield small-section-header">
+                           <a href="#structfield.batch" class="anchor field"></a>
+                           <span id="batch.v" class='invisible'>
+                           <code>batch: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.seen" class="structfield small-section-header">
+                           <a href="#structfield.seen" class="anchor field"></a>
+                           <span id="seen.v" class='invisible'>
+                           <code>seen: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a></code>
+                           </span></span><span id="structfield.t" class="structfield small-section-header">
+                           <a href="#structfield.t" class="anchor field"></a>
+                           <span id="t.v" class='invisible'>
+                           <code>t: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.epoch" class="structfield small-section-header">
+                           <a href="#structfield.epoch" class="anchor field"></a>
+                           <span id="epoch.v" class='invisible'>
+                           <code>epoch: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.subdivisions" class="structfield small-section-header">
+                           <a href="#structfield.subdivisions" class="anchor field"></a>
+                           <span id="subdivisions.v" class='invisible'>
+                           <code>subdivisions: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.layers" class="structfield small-section-header">
+                           <a href="#structfield.layers" class="anchor field"></a>
+                           <span id="layers.v" class='invisible'>
+                           <code>layers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../../darknet/ffi/struct.layer.html" title="struct darknet::ffi::layer">layer</a></code>
+                           </span></span><span id="structfield.output" class="structfield small-section-header">
+                           <a href="#structfield.output" class="anchor field"></a>
+                           <span id="output.v" class='invisible'>
+                           <code>output: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.policy" class="structfield small-section-header">
+                           <a href="#structfield.policy" class="anchor field"></a>
+                           <span id="policy.v" class='invisible'>
+                           <code>policy: <a class="type" href="../../darknet/ffi/type.learning_rate_policy.html" title="type darknet::ffi::learning_rate_policy">learning_rate_policy</a></code>
+                           </span></span><span id="structfield.learning_rate" class="structfield small-section-header">
+                           <a href="#structfield.learning_rate" class="anchor field"></a>
+                           <span id="learning_rate.v" class='invisible'>
+                           <code>learning_rate: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.momentum" class="structfield small-section-header">
+                           <a href="#structfield.momentum" class="anchor field"></a>
+                           <span id="momentum.v" class='invisible'>
+                           <code>momentum: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.decay" class="structfield small-section-header">
+                           <a href="#structfield.decay" class="anchor field"></a>
+                           <span id="decay.v" class='invisible'>
+                           <code>decay: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.gamma" class="structfield small-section-header">
+                           <a href="#structfield.gamma" class="anchor field"></a>
+                           <span id="gamma.v" class='invisible'>
+                           <code>gamma: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.scale" class="structfield small-section-header">
+                           <a href="#structfield.scale" class="anchor field"></a>
+                           <span id="scale.v" class='invisible'>
+                           <code>scale: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.power" class="structfield small-section-header">
+                           <a href="#structfield.power" class="anchor field"></a>
+                           <span id="power.v" class='invisible'>
+                           <code>power: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.time_steps" class="structfield small-section-header">
+                           <a href="#structfield.time_steps" class="anchor field"></a>
+                           <span id="time_steps.v" class='invisible'>
+                           <code>time_steps: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.step" class="structfield small-section-header">
+                           <a href="#structfield.step" class="anchor field"></a>
+                           <span id="step.v" class='invisible'>
+                           <code>step: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.max_batches" class="structfield small-section-header">
+                           <a href="#structfield.max_batches" class="anchor field"></a>
+                           <span id="max_batches.v" class='invisible'>
+                           <code>max_batches: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.scales" class="structfield small-section-header">
+                           <a href="#structfield.scales" class="anchor field"></a>
+                           <span id="scales.v" class='invisible'>
+                           <code>scales: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.steps" class="structfield small-section-header">
+                           <a href="#structfield.steps" class="anchor field"></a>
+                           <span id="steps.v" class='invisible'>
+                           <code>steps: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.num_steps" class="structfield small-section-header">
+                           <a href="#structfield.num_steps" class="anchor field"></a>
+                           <span id="num_steps.v" class='invisible'>
+                           <code>num_steps: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.burn_in" class="structfield small-section-header">
+                           <a href="#structfield.burn_in" class="anchor field"></a>
+                           <span id="burn_in.v" class='invisible'>
+                           <code>burn_in: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.adam" class="structfield small-section-header">
+                           <a href="#structfield.adam" class="anchor field"></a>
+                           <span id="adam.v" class='invisible'>
+                           <code>adam: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.B1" class="structfield small-section-header">
+                           <a href="#structfield.B1" class="anchor field"></a>
+                           <span id="B1.v" class='invisible'>
+                           <code>B1: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.B2" class="structfield small-section-header">
+                           <a href="#structfield.B2" class="anchor field"></a>
+                           <span id="B2.v" class='invisible'>
+                           <code>B2: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.eps" class="structfield small-section-header">
+                           <a href="#structfield.eps" class="anchor field"></a>
+                           <span id="eps.v" class='invisible'>
+                           <code>eps: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.inputs" class="structfield small-section-header">
+                           <a href="#structfield.inputs" class="anchor field"></a>
+                           <span id="inputs.v" class='invisible'>
+                           <code>inputs: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.outputs" class="structfield small-section-header">
+                           <a href="#structfield.outputs" class="anchor field"></a>
+                           <span id="outputs.v" class='invisible'>
+                           <code>outputs: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.truths" class="structfield small-section-header">
+                           <a href="#structfield.truths" class="anchor field"></a>
+                           <span id="truths.v" class='invisible'>
+                           <code>truths: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.notruth" class="structfield small-section-header">
+                           <a href="#structfield.notruth" class="anchor field"></a>
+                           <span id="notruth.v" class='invisible'>
+                           <code>notruth: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.h" class="structfield small-section-header">
+                           <a href="#structfield.h" class="anchor field"></a>
+                           <span id="h.v" class='invisible'>
+                           <code>h: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.w" class="structfield small-section-header">
+                           <a href="#structfield.w" class="anchor field"></a>
+                           <span id="w.v" class='invisible'>
+                           <code>w: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.c" class="structfield small-section-header">
+                           <a href="#structfield.c" class="anchor field"></a>
+                           <span id="c.v" class='invisible'>
+                           <code>c: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.max_crop" class="structfield small-section-header">
+                           <a href="#structfield.max_crop" class="anchor field"></a>
+                           <span id="max_crop.v" class='invisible'>
+                           <code>max_crop: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.min_crop" class="structfield small-section-header">
+                           <a href="#structfield.min_crop" class="anchor field"></a>
+                           <span id="min_crop.v" class='invisible'>
+                           <code>min_crop: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.max_ratio" class="structfield small-section-header">
+                           <a href="#structfield.max_ratio" class="anchor field"></a>
+                           <span id="max_ratio.v" class='invisible'>
+                           <code>max_ratio: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.min_ratio" class="structfield small-section-header">
+                           <a href="#structfield.min_ratio" class="anchor field"></a>
+                           <span id="min_ratio.v" class='invisible'>
+                           <code>min_ratio: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.center" class="structfield small-section-header">
+                           <a href="#structfield.center" class="anchor field"></a>
+                           <span id="center.v" class='invisible'>
+                           <code>center: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.angle" class="structfield small-section-header">
+                           <a href="#structfield.angle" class="anchor field"></a>
+                           <span id="angle.v" class='invisible'>
+                           <code>angle: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.aspect" class="structfield small-section-header">
+                           <a href="#structfield.aspect" class="anchor field"></a>
+                           <span id="aspect.v" class='invisible'>
+                           <code>aspect: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.exposure" class="structfield small-section-header">
+                           <a href="#structfield.exposure" class="anchor field"></a>
+                           <span id="exposure.v" class='invisible'>
+                           <code>exposure: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.saturation" class="structfield small-section-header">
+                           <a href="#structfield.saturation" class="anchor field"></a>
+                           <span id="saturation.v" class='invisible'>
+                           <code>saturation: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.hue" class="structfield small-section-header">
+                           <a href="#structfield.hue" class="anchor field"></a>
+                           <span id="hue.v" class='invisible'>
+                           <code>hue: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.random" class="structfield small-section-header">
+                           <a href="#structfield.random" class="anchor field"></a>
+                           <span id="random.v" class='invisible'>
+                           <code>random: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.gpu_index" class="structfield small-section-header">
+                           <a href="#structfield.gpu_index" class="anchor field"></a>
+                           <span id="gpu_index.v" class='invisible'>
+                           <code>gpu_index: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.hierarchy" class="structfield small-section-header">
+                           <a href="#structfield.hierarchy" class="anchor field"></a>
+                           <span id="hierarchy.v" class='invisible'>
+                           <code>hierarchy: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="struct" href="../../darknet/ffi/struct.tree.html" title="struct darknet::ffi::tree">tree</a></code>
+                           </span></span><span id="structfield.input" class="structfield small-section-header">
+                           <a href="#structfield.input" class="anchor field"></a>
+                           <span id="input.v" class='invisible'>
+                           <code>input: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.truth" class="structfield small-section-header">
+                           <a href="#structfield.truth" class="anchor field"></a>
+                           <span id="truth.v" class='invisible'>
+                           <code>truth: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.delta" class="structfield small-section-header">
+                           <a href="#structfield.delta" class="anchor field"></a>
+                           <span id="delta.v" class='invisible'>
+                           <code>delta: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.workspace" class="structfield small-section-header">
+                           <a href="#structfield.workspace" class="anchor field"></a>
+                           <span id="workspace.v" class='invisible'>
+                           <code>workspace: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.train" class="structfield small-section-header">
+                           <a href="#structfield.train" class="anchor field"></a>
+                           <span id="train.v" class='invisible'>
+                           <code>train: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.index" class="structfield small-section-header">
+                           <a href="#structfield.index" class="anchor field"></a>
+                           <span id="index.v" class='invisible'>
+                           <code>index: <a class="type" href="https://doc.rust-lang.org/nightly/std/os/raw/type.c_int.html" title="type std::os::raw::c_int">c_int</a></code>
+                           </span></span><span id="structfield.cost" class="structfield small-section-header">
+                           <a href="#structfield.cost" class="anchor field"></a>
+                           <span id="cost.v" class='invisible'>
+                           <code>cost: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*mut </a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span><span id="structfield.clip" class="structfield small-section-header">
+                           <a href="#structfield.clip" class="anchor field"></a>
+                           <span id="clip.v" class='invisible'>
+                           <code>clip: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a></code>
+                           </span></span>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../darknet/ffi/struct.network.html" title="struct darknet::ffi::network">network</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/darknet/ffi_linux.rs.html#3807' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/darknet/ffi_linux.rs.html#3807' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
+</div></div><h3 id='impl-Copy' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html" title="trait core::marker::Copy">Copy</a> for <a class="struct" href="../../darknet/ffi/struct.network.html" title="struct darknet::ffi::network">network</a></code><a href='#impl-Copy' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/darknet/ffi_linux.rs.html#3807' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../darknet/ffi/struct.network.html" title="struct darknet::ffi::network">network</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/darknet/ffi_linux.rs.html#3807' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../../darknet/ffi/struct.network.html" title="struct darknet::ffi::network">network</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/darknet/ffi_linux.rs.html#3807' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt><kbd>?</kbd></dt>
+                    <dd>Show this help dialog</dd>
+                    <dt><kbd>S</kbd></dt>
+                    <dd>Focus the search field</dd>
+                    <dt><kbd>↑</kbd></dt>
+                    <dd>Move up in search results</dd>
+                    <dt><kbd>↓</kbd></dt>
+                    <dd>Move down in search results</dd>
+                    <dt><kbd>↹</kbd></dt>
+                    <dd>Switch tab</dd>
+                    <dt><kbd>&#9166;</kbd></dt>
+                    <dd>Go to active search result</dd>
+                    <dt><kbd>+</kbd></dt>
+                    <dd>Expand all sections</dd>
+                    <dt><kbd>-</kbd></dt>
+                    <dd>Collapse all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "darknet";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>
