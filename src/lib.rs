@@ -66,6 +66,13 @@ pub struct Network {
     nnp_status: bool,
 }
 
+/// Threadpool.
+#[cfg(feature = "nnpack")]
+#[derive(Debug)]
+pub struct ThreadPool {
+    inner: ffi::pthreadpool_t,
+}
+
 impl Network {
     /// Create a new network.
     pub fn new<P: AsRef<Path>>(config: P, weight: P) -> Result<Self, Error> {
@@ -80,13 +87,21 @@ impl Network {
 
     #[cfg(feature = "nnpack")]
     /// Initializes the network with a threadpool.
-    pub fn threadpool(&mut self, n: usize) {
+    pub fn create_threadpool(&mut self, n: usize) {
         if !self.nnp_status {
             unsafe { ffi::nnp_initialize() };
             self.nnp_status = true;
         }
 
         unsafe { (*self.net).threadpool = ffi::pthreadpool_create(n) }
+    }
+
+    #[cfg(feature = "nnpack")]
+    /// Return a reference to the thread pool.
+    pub fn threadpool(&mut self) -> ThreadPool {
+        ThreadPool {
+            inner: self.net.threadpool,
+        }
     }
 
     /// Return the width of the network.
@@ -330,11 +345,13 @@ impl Image {
 
     /// Load a new image with multiple threads.
     #[cfg(feature = "nnpack")]
-    pub fn load_threaded<P: AsRef<Path>>(filename: P, network: &Network) -> Result<Self, Error> {
+    pub fn load_threaded<P: AsRef<Path>>(
+        filename: P,
+        channel: i32,
+        pool: &ThreadPool,
+    ) -> Result<Self, Error> {
         let filename = path_to_cstring(filename)?.into_raw();
-        let img = unsafe {
-            ffi::load_image_thread(filename, 0, 0, (*network.net).c, (*network.net).threadpool)
-        };
+        let img = unsafe { ffi::load_image_thread(filename, 0, 0, c, pool.inner) };
         Ok(Image(img))
     }
 
